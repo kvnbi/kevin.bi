@@ -1,0 +1,63 @@
+:root {
+  --silver: #D8DBDE;
+  --black: #161719;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--silver);
+  color: var(--black);
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  max-width: 420px;
+  padding: 2rem;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: var(--black);
+}
+
+.bio {
+  color: var(--black);
+  opacity: 0.8;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+
+.email {
+  color: var(--black);
+  opacity: 0.65;
+  font-size: 0.9rem;
+  margin: 0 0 2rem;
+}
+
+.links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.links a {
+  color: var(--black);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.links a:hover {
+  border-color: var(--black);
+}
