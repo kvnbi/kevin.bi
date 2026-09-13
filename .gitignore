@@ -8,3 +8,4 @@ engine/blitz/blitz
 engine/blitz/perft
 engine/blitz/.stamp
 .DS_Store
+engine/build/

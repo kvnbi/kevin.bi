@@ -14,7 +14,8 @@
     #define BLITZ_AVX2 1
 #endif
 
-#if defined(__APPLE__)
+#if defined(__EMSCRIPTEN__)
+#elif defined(__APPLE__)
     #define BLITZ_NET_SECTION ".const_data\n"
     #define BLITZ_NET_SYMBOL(name) "_" name
 #elif defined(_WIN32)
@@ -25,6 +26,7 @@
     #define BLITZ_NET_SYMBOL(name) name
 #endif
 
+#if !defined(__EMSCRIPTEN__)
 __asm__(BLITZ_NET_SECTION
         ".global " BLITZ_NET_SYMBOL("blitz_embedded_net") "\n"
         ".balign 64\n"
@@ -36,6 +38,7 @@ __asm__(BLITZ_NET_SECTION
         BLITZ_NET_SYMBOL("blitz_embedded_net_size") ":\n"
         ".quad Lblitz_embedded_net_end - " BLITZ_NET_SYMBOL("blitz_embedded_net") "\n"
         ".text\n");
+#endif
 
 extern "C" const unsigned char blitz_embedded_net[];
 extern "C" const unsigned long long blitz_embedded_net_size;

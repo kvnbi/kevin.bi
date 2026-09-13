@@ -17,6 +17,8 @@ std::ostream& operator<<(std::ostream& os, SyncCout sc);
 
 namespace UCI {
 
+void init_position(Position& pos);
+bool execute(Position& pos, const std::string& cmd);
 void loop(int argc, char** argv);
 
 std::string value(Value v);

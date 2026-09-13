@@ -34,8 +34,12 @@ constexpr auto StartFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 
 
 std::deque<StateInfo> g_states;
 
+#ifndef BLITZ_DEFAULT_HASH
+#define BLITZ_DEFAULT_HASH 256
+#endif
+
 struct OptionValues {
-    int  hash = 256;
+    int  hash = BLITZ_DEFAULT_HASH;
     int  threads = 1;
     int  multiPV = 1;
     int  moveOverhead = 30;
@@ -170,7 +174,7 @@ void set(const std::string& name, const std::string& value) {
     };
 
     if (name == "Hash") {
-        g_opt.hash = num(1, 1024 * 1024, 256);
+        g_opt.hash = num(1, 1024 * 1024, BLITZ_DEFAULT_HASH);
         TT.resize(size_t(g_opt.hash), g_opt.threads);
     } else if (name == "Threads") {
         g_opt.threads = num(1, 1024, 1);
@@ -204,7 +208,7 @@ void set(const std::string& name, const std::string& value) {
 
 void print_all() {
     sync_cout
-        << "option name Hash type spin default 256 min 1 max 1048576\n"
+        << "option name Hash type spin default " << BLITZ_DEFAULT_HASH << " min 1 max 1048576\n"
         << "option name Threads type spin default 1 min 1 max 1024\n"
         << "option name MultiPV type spin default 1 min 1 max 256\n"
         << "option name Move Overhead type spin default 30 min 0 max 5000\n"
@@ -288,59 +292,66 @@ std::string pv(const Thread& th, int depth) {
     return ss.str();
 }
 
-void loop(int argc, char** argv) {
-    Position pos;
+void init_position(Position& pos) {
     g_states.clear();
     g_states.emplace_back();
     pos.set(StartFEN, false, &g_states.back());
+}
 
-    std::string cmd, token;
+bool execute(Position& pos, const std::string& cmd) {
+    std::istringstream is(cmd);
+    std::string token;
+    is >> std::skipws >> token;
+
+    if (token == "quit" || token == "stop") {
+        Threads.stop = true;
+    } else if (token == "ponderhit") {
+        Threads.main()->ponder = false;
+    } else if (token == "uci") {
+        sync_cout << "id name " << engine_info() << "\nid author Blitz contributors"
+                  << sync_endl;
+        Options::print_all();
+        sync_cout << "uciok" << sync_endl;
+    } else if (token == "setoption") {
+        setoption_cmd(is);
+    } else if (token == "go") {
+        go_cmd(pos, is);
+    } else if (token == "position") {
+        position_cmd(pos, is);
+    } else if (token == "ucinewgame") {
+        Search::clear();
+    } else if (token == "isready") {
+        sync_cout << "readyok" << sync_endl;
+    } else if (token == "d") {
+        sync_cout << pos << sync_endl;
+    } else if (token == "eval") {
+        sync_cout << Eval::trace(pos) << sync_endl;
+    } else if (token == "bench") {
+        benchmark(pos, is);
+    } else if (token == "nnuecheck") {
+        int games = 200;
+        if (is >> token) {
+            char* end = nullptr;
+            long g = std::strtol(token.c_str(), &end, 10);
+            if (end != token.c_str() && g > 0) games = int(g);
+        }
+        nnue_check(games, 240, 0x5EEDULL);
+    } else if (!token.empty()) {
+        sync_cout << "Unknown command: '" << cmd << "'" << sync_endl;
+    }
+    return token != "quit";
+}
+
+void loop(int argc, char** argv) {
+    Position pos;
+    init_position(pos);
+
+    std::string cmd;
     for (int i = 1; i < argc; ++i) cmd += std::string(argv[i]) + " ";
 
     do {
         if (argc == 1 && !std::getline(std::cin, cmd)) cmd = "quit";
-
-        std::istringstream is(cmd);
-        token.clear();
-        is >> std::skipws >> token;
-
-        if (token == "quit" || token == "stop") {
-            Threads.stop = true;
-        } else if (token == "ponderhit") {
-            Threads.main()->ponder = false;
-        } else if (token == "uci") {
-            sync_cout << "id name " << engine_info() << "\nid author Blitz contributors"
-                      << sync_endl;
-            Options::print_all();
-            sync_cout << "uciok" << sync_endl;
-        } else if (token == "setoption") {
-            setoption_cmd(is);
-        } else if (token == "go") {
-            go_cmd(pos, is);
-        } else if (token == "position") {
-            position_cmd(pos, is);
-        } else if (token == "ucinewgame") {
-            Search::clear();
-        } else if (token == "isready") {
-            sync_cout << "readyok" << sync_endl;
-        } else if (token == "d") {
-            sync_cout << pos << sync_endl;
-        } else if (token == "eval") {
-            sync_cout << Eval::trace(pos) << sync_endl;
-        } else if (token == "bench") {
-            benchmark(pos, is);
-        } else if (token == "nnuecheck") {
-            int games = 200;
-            if (is >> token) {
-                char* end = nullptr;
-                long g = std::strtol(token.c_str(), &end, 10);
-                if (end != token.c_str() && g > 0) games = int(g);
-            }
-            nnue_check(games, 240, 0x5EEDULL);
-        } else if (!token.empty()) {
-            sync_cout << "Unknown command: '" << cmd << "'" << sync_endl;
-        }
-    } while (token != "quit" && argc == 1);
+    } while (execute(pos, cmd) && argc == 1);
 
     Threads.main()->wait_for_search_finished();
 }
