@@ -16,9 +16,24 @@ const messages = {
   loss: 'Checkmate. Try again',
 };
 
+let unlocked = false;
+
+function unlock() {
+  if (unlocked) return;
+  unlocked = true;
+  document.body.classList.add('unlocked');
+}
+
+function survived(state) {
+  if (state.status === 'turn' && state.moves >= SURVIVE_MOVES) return true;
+  if (state.status === 'over' && state.result !== 'loss') return true;
+  return false;
+}
+
 createGame(document.getElementById('board'), {
   onUpdate(state) {
     survivedEl.textContent = String(Math.min(state.moves, SURVIVE_MOVES));
     statusEl.textContent = state.status === 'over' ? messages[state.result] : messages[state.status];
+    if (survived(state)) unlock();
   },
 });

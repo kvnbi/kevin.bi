@@ -10,12 +10,10 @@
   grid-template-rows: repeat(8, 1fr);
   width: 100%;
   aspect-ratio: 1;
-  overflow: visible;
   container-type: inline-size;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
-  font-family: inherit;
 }
 
 .square {
