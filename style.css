@@ -56,24 +56,8 @@ h1 {
 }
 
 .locked {
-  position: relative;
   max-width: 420px;
   margin-top: 3rem;
-}
-
-.locked .caption {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--black);
-  z-index: 1;
 }
 
 .locked .content {
@@ -90,10 +74,6 @@ h1 {
 
 .unlocked .locked {
   margin-top: 1rem;
-}
-
-.unlocked .locked .caption {
-  display: none;
 }
 
 .unlocked .locked .content {
@@ -136,4 +116,42 @@ h1 {
 
 .links a:hover {
   border-color: var(--black);
+}
+
+.popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(22, 23, 25, 0.45);
+  z-index: 10;
+}
+
+.card {
+  max-width: 320px;
+  padding: 1.5rem 1.75rem;
+  background: #fff;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.card p {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+.card button {
+  padding: 0.55rem 2rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--black);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
 }

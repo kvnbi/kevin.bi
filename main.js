@@ -7,6 +7,10 @@ const statusEl = document.getElementById('status');
 
 for (const el of document.querySelectorAll('#goal, .goal')) el.textContent = String(SURVIVE_MOVES);
 
+document.getElementById('ok').addEventListener('click', () => {
+  document.getElementById('popup').remove();
+});
+
 const messages = {
   loading: 'Loading Blitz',
   turn: 'Your move, you are White',
