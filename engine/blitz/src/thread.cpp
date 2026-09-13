@@ -14,6 +14,23 @@ namespace blitz {
 ThreadPool Threads;
 thread_local Thread* thisThread = nullptr;
 
+#ifdef BLITZ_SINGLE_THREAD
+
+Thread::Thread(size_t id) : idx_(id) { searching = false; }
+
+Thread::~Thread() { assert(!searching); }
+
+void Thread::start_searching() {
+    thisThread = this;
+    searching = true;
+    search();
+    searching = false;
+}
+
+void Thread::wait_for_search_finished() {}
+
+#else
+
 Thread::Thread(size_t id) : idx_(id), stdThread_(&Thread::idle_loop, this) {
     wait_for_search_finished();
 }
@@ -24,6 +41,8 @@ Thread::~Thread() {
     start_searching();
     stdThread_.join();
 }
+
+#endif
 
 void Thread::clear() {
     mainHistory.fill(0);
@@ -37,6 +56,8 @@ void Thread::clear() {
             for (auto& pieceRow : continuationHistory[inCheck][capture])
                 for (auto& h : pieceRow) h.fill(-427);
 }
+
+#ifndef BLITZ_SINGLE_THREAD
 
 void Thread::start_searching() {
     { std::lock_guard lk(mutex_); searching = true; }
@@ -62,7 +83,12 @@ void Thread::idle_loop() {
     }
 }
 
+#endif
+
 void ThreadPool::set(size_t n) {
+#ifdef BLITZ_SINGLE_THREAD
+    n = std::min<size_t>(n, 1);
+#endif
     if (!threads_.empty()) {
         main()->wait_for_search_finished();
         while (!threads_.empty()) { delete threads_.back(); threads_.pop_back(); }

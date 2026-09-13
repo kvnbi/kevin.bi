@@ -18,6 +18,11 @@ LDFLAGS  ?= -flto=auto -pthread
 HL ?= 128
 CXXFLAGS += -DBLITZ_HL=$(HL)
 
+SINGLE ?= 0
+ifeq ($(SINGLE),1)
+    CXXFLAGS += -DBLITZ_SINGLE_THREAD
+endif
+
 ifeq ($(ARCH),native)
     ifeq ($(shell uname -m),arm64)
         CXXFLAGS += -mcpu=native
@@ -41,7 +46,7 @@ ifneq (,$(findstring mingw,$(shell $(CXX) -dumpmachine 2>/dev/null))$(findstring
     LDFLAGS += -static -s
 endif
 
-STAMP = $(HL) $(ARCH) $(CXX)
+STAMP = $(HL) $(ARCH) $(CXX) $(SINGLE)
 ifneq ($(shell cat .stamp 2>/dev/null),$(STAMP))
     $(shell rm -f $(OBJECTS) $(DEPS) .stamp)
 endif

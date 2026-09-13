@@ -148,8 +148,10 @@ void MainThread::search() {
         Thread::search();
     }
 
+#ifndef BLITZ_SINGLE_THREAD
     while (!Threads.stop && (ponder || Limits.infinite))
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
+#endif
 
     Threads.stop = true;
     Threads.wait_for_search_finished();

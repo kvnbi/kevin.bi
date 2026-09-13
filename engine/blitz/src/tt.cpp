@@ -3,7 +3,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifndef BLITZ_SINGLE_THREAD
 #include <thread>
+#endif
 #include <vector>
 
 namespace blitz {
@@ -39,6 +41,10 @@ void TranspositionTable::resize(size_t mbSize, int threads) {
 }
 
 void TranspositionTable::clear(int threads) {
+#ifdef BLITZ_SINGLE_THREAD
+    (void)threads;
+    std::memset(table_, 0, clusterCount_ * sizeof(Cluster));
+#else
     std::vector<std::thread> workers;
     for (int i = 0; i < threads; ++i)
         workers.emplace_back([this, i, threads]() {
@@ -47,6 +53,7 @@ void TranspositionTable::clear(int threads) {
             std::memset(table_ + begin, 0, (end - begin) * sizeof(Cluster));
         });
     for (auto& t : workers) t.join();
+#endif
     generation_ = 0;
 }
 

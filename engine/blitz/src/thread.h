@@ -2,14 +2,17 @@
 #include "history.h"
 #include "position.h"
 #include "search.h"
-#include "thread_stack.h"
 #include <atomic>
-#include <condition_variable>
-#include <mutex>
 #include <functional>
-#include <thread>
 #include <memory>
 #include <vector>
+
+#ifndef BLITZ_SINGLE_THREAD
+#include "thread_stack.h"
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+#endif
 
 namespace blitz {
 
@@ -20,7 +23,6 @@ public:
 
     virtual void search();
     void clear();
-    void idle_loop();
     void start_searching();
     void wait_for_search_finished();
     size_t id() const { return idx_; }
@@ -44,11 +46,16 @@ public:
     CorrectionHistory     materialCorrectionHistory;
 
 protected:
+    size_t idx_;
+
+#ifndef BLITZ_SINGLE_THREAD
+    void idle_loop();
+
     std::mutex mutex_;
     std::condition_variable cv_;
-    size_t idx_;
     bool exit_ = false;
     NativeThread stdThread_;
+#endif
 };
 
 class MainThread : public Thread {
