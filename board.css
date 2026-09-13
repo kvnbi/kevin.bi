@@ -1,0 +1,176 @@
+.board {
+  --light: #eeeed2;
+  --dark: #769656;
+  --highlight: rgba(255, 255, 0, 0.5);
+  --hint: rgba(0, 0, 0, 0.1);
+  --hover: rgba(255, 255, 255, 0.65);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: visible;
+  container-type: inline-size;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  font-family: inherit;
+}
+
+.square {
+  position: relative;
+  background-color: var(--light);
+}
+
+.square.dark {
+  background-color: var(--dark);
+}
+
+.square.selected::before,
+.square.last::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--highlight);
+}
+
+.square.check::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgb(255, 0, 0) 0%, rgb(231, 0, 0) 25%, rgba(169, 0, 0, 0) 89%, rgba(158, 0, 0, 0) 100%);
+}
+
+.square.hint::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 33%;
+  height: 33%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--hint);
+  pointer-events: none;
+}
+
+.square.hint.capture::after {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: 1.1cqw solid var(--hint);
+  box-sizing: border-box;
+}
+
+.square.hover {
+  box-shadow: inset 0 0 0 0.55cqw var(--hover);
+}
+
+.square.movable {
+  cursor: grab;
+}
+
+.piece {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.piece.hidden {
+  visibility: hidden;
+}
+
+.drag {
+  position: absolute;
+  width: 12.5%;
+  height: 12.5%;
+  left: 0;
+  top: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  pointer-events: none;
+  z-index: 5;
+  cursor: grabbing;
+}
+
+.board.dragging,
+.board.dragging .square.movable {
+  cursor: grabbing;
+}
+
+.coord {
+  position: absolute;
+  font-size: 2.3cqw;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.coord.rank {
+  top: 0.55cqw;
+  left: 0.55cqw;
+}
+
+.coord.file {
+  bottom: 0.5cqw;
+  right: 0.55cqw;
+}
+
+.square.dark .coord {
+  color: var(--light);
+}
+
+.square.light .coord {
+  color: var(--dark);
+}
+
+.promotion {
+  position: absolute;
+  width: 12.5%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  box-shadow: 0 0.5cqw 1.5cqw rgba(0, 0, 0, 0.45);
+  z-index: 6;
+}
+
+.promotion.up {
+  flex-direction: column-reverse;
+}
+
+.promotion .choice {
+  width: 100%;
+  aspect-ratio: 1;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  cursor: pointer;
+}
+
+.promotion .choice:hover {
+  background-color: #d9d9d9;
+}
+
+.promotion .close {
+  width: 100%;
+  aspect-ratio: 2;
+  background: #f1f1f1;
+  color: #666;
+  font-size: 2.6cqw;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.promotion .close:hover {
+  background: #e4e4e4;
+}
