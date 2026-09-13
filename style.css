@@ -8,23 +8,80 @@ body {
   background: var(--silver);
   color: var(--black);
   margin: 0;
-  display: flex;
   min-height: 100vh;
-  align-items: center;
-  justify-content: center;
 }
 
 main {
-  max-width: 420px;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem 4rem;
   text-align: center;
 }
 
 h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
+  font-size: clamp(3rem, 12vw, 11rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0 0 1.5rem;
   color: var(--black);
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.counter {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--black);
+  opacity: 0.85;
+}
+
+#board {
+  width: min(92vw, 64vh, 520px);
+}
+
+.status {
+  min-height: 1.4rem;
+  font-size: 0.9rem;
+  margin: 0.85rem 0 0;
+  color: var(--black);
+  opacity: 0.65;
+}
+
+.locked {
+  position: relative;
+  max-width: 420px;
+  margin-top: 3rem;
+}
+
+.locked .caption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--black);
+  z-index: 1;
+}
+
+.locked .content {
+  filter: blur(7px);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .bio {
