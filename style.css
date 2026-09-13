@@ -56,16 +56,9 @@ h1 {
 }
 
 .locked {
+  display: none;
   max-width: 420px;
-  margin-top: 3rem;
-}
-
-.locked .content {
-  filter: blur(7px);
-  opacity: 0.55;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-select: none;
+  margin-top: 1rem;
 }
 
 .unlocked .game {
@@ -73,15 +66,7 @@ h1 {
 }
 
 .unlocked .locked {
-  margin-top: 1rem;
-}
-
-.unlocked .locked .content {
-  filter: none;
-  opacity: 1;
-  pointer-events: auto;
-  user-select: auto;
-  -webkit-user-select: auto;
+  display: block;
 }
 
 .bio {
