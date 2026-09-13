@@ -1,0 +1,10 @@
+engine/blitz/*.o
+engine/blitz/*.d
+engine/blitz/src/*.o
+engine/blitz/src/*.d
+engine/blitz/src/nnue/*.o
+engine/blitz/src/nnue/*.d
+engine/blitz/blitz
+engine/blitz/perft
+engine/blitz/.stamp
+.DS_Store
