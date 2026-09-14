@@ -1,12 +1,13 @@
 :root {
+  --carbon: #111214;
   --silver: #D8DBDE;
-  --black: #161719;
+  --white: #FFFFFF;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--silver);
-  color: var(--black);
+  background: var(--carbon);
+  color: var(--silver);
   margin: 0;
   min-height: 100vh;
 }
@@ -25,7 +26,7 @@ h1 {
   letter-spacing: -0.04em;
   line-height: 1;
   margin: 0 0 1.5rem;
-  color: var(--black);
+  color: var(--white);
 }
 
 .game {
@@ -39,8 +40,6 @@ h1 {
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 0.75rem;
-  color: var(--black);
-  opacity: 0.85;
 }
 
 #board {
@@ -51,8 +50,7 @@ h1 {
   min-height: 1.4rem;
   font-size: 0.9rem;
   margin: 0.85rem 0 0;
-  color: var(--black);
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 .locked {
@@ -70,17 +68,14 @@ h1 {
 }
 
 .bio {
-  color: var(--black);
-  opacity: 0.8;
   line-height: 1.5;
   margin: 0 0 0.75rem;
 }
 
 .email {
-  color: var(--black);
-  opacity: 0.65;
   font-size: 0.9rem;
   margin: 0 0 2rem;
+  opacity: 0.7;
 }
 
 .links {
@@ -93,14 +88,15 @@ h1 {
 }
 
 .links a {
-  color: var(--black);
+  color: var(--silver);
   text-decoration: none;
   font-weight: 500;
   border-bottom: 1px solid transparent;
 }
 
 .links a:hover {
-  border-color: var(--black);
+  color: var(--white);
+  border-color: var(--white);
 }
 
 .popup {
@@ -110,33 +106,29 @@ h1 {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(22, 23, 25, 0.45);
+  background: rgba(17, 18, 20, 0.92);
   z-index: 10;
 }
 
 .card {
-  max-width: 320px;
-  padding: 1.5rem 1.75rem;
-  background: #fff;
-  border-radius: 6px;
+  max-width: 360px;
   text-align: center;
 }
 
 .card p {
-  margin: 0 0 1.25rem;
-  font-size: 1rem;
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
   font-weight: 500;
-  line-height: 1.5;
-  color: var(--black);
+  line-height: 1.4;
+  color: var(--white);
 }
 
 .card button {
-  padding: 0.55rem 2rem;
+  padding: 0.6rem 2.5rem;
   font: inherit;
   font-weight: 600;
-  color: #fff;
-  background: var(--black);
+  color: var(--carbon);
+  background: var(--white);
   border: 0;
-  border-radius: 4px;
   cursor: pointer;
 }
