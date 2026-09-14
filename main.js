@@ -1,6 +1,7 @@
 import { createGame } from './game.js';
 
 const SURVIVE_MOVES = 10;
+const MOVETIME = 1000;
 
 const survivedEl = document.getElementById('survived');
 const statusEl = document.getElementById('status');
@@ -35,6 +36,7 @@ function survived(state) {
 }
 
 createGame(document.getElementById('board'), {
+  movetime: MOVETIME,
   onUpdate(state) {
     survivedEl.textContent = String(Math.min(state.moves, SURVIVE_MOVES));
     statusEl.textContent = state.status === 'over' ? messages[state.result] : messages[state.status];
