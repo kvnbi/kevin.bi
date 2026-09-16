@@ -1,9 +1,12 @@
 const FILES = 'abcdefgh';
 const DRAG_THRESHOLD = 3;
+const MOVE_DURATION = 180;
 
 export function createBoard(root, chess, options = {}) {
   const onMove = options.onMove || (() => {});
   const squares = new Map();
+  const animations = new Set();
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let selected = null;
   let lastMove = null;
   let enabled = true;
@@ -96,6 +99,42 @@ export function createBoard(root, chess, options = {}) {
     }
   }
 
+  function finishAnimations() {
+    for (const animation of animations) animation.finish();
+  }
+
+  function renderMove(move, animate = true) {
+    finishAnimations();
+    const moves = [{ from: move.from, to: move.to, animate }];
+    if (move.flags.includes('k')) {
+      moves.push({ from: 'h' + move.from[1], to: 'f' + move.from[1], animate: true });
+    } else if (move.flags.includes('q')) {
+      moves.push({ from: 'a' + move.from[1], to: 'd' + move.from[1], animate: true });
+    }
+
+    const moving = moves.map((step) => {
+      const from = squares.get(step.from);
+      const to = squares.get(step.to);
+      return { ...step, to, origin: from.getBoundingClientRect(), destination: to.getBoundingClientRect() };
+    });
+
+    render();
+    if (reducedMotion.matches) return;
+
+    for (const step of moving) {
+      const piece = step.to.querySelector('.piece');
+      if (!piece || !step.animate) continue;
+      const x = step.origin.left - step.destination.left;
+      const y = step.origin.top - step.destination.top;
+      const animation = piece.animate([
+        { transform: `translate(${x}px, ${y}px)`, zIndex: 3 },
+        { transform: 'translate(0, 0)', zIndex: 3 },
+      ], { duration: MOVE_DURATION, easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)' });
+      animations.add(animation);
+      animation.onfinish = animation.oncancel = () => animations.delete(animation);
+    }
+  }
+
   function squareAt(clientX, clientY) {
     const rect = root.getBoundingClientRect();
     const x = Math.floor(((clientX - rect.left) / rect.width) * 8);
@@ -104,21 +143,21 @@ export function createBoard(root, chess, options = {}) {
     return FILES[x] + (8 - y);
   }
 
-  function applyMove(from, to, promo) {
+  function applyMove(from, to, promo, animate = true) {
     const move = chess.move({ from, to, promotion: promo });
     selected = null;
     lastMove = { from: move.from, to: move.to };
-    render();
+    renderMove(move, animate);
     onMove(move);
   }
 
-  function tryMove(from, to) {
+  function tryMove(from, to, animate = true) {
     const candidates = legalMoves(from).filter((m) => m.to === to);
     if (candidates.length === 0) return false;
     if (candidates[0].promotion) {
       openPromotion(from, to, candidates[0].color);
     } else {
-      applyMove(from, to);
+      applyMove(from, to, undefined, animate);
     }
     return true;
   }
@@ -203,6 +242,7 @@ export function createBoard(root, chess, options = {}) {
       return;
     }
 
+    finishAnimations();
     const name = squareAt(event.clientX, event.clientY);
     if (!name) return;
     const piece = chess.get(name);
@@ -253,7 +293,7 @@ export function createBoard(root, chess, options = {}) {
       return;
     }
 
-    if (target && target !== from && tryMove(from, target)) return;
+    if (target && target !== from && tryMove(from, target, false)) return;
 
     if (target !== from) selected = null;
     render();
@@ -279,9 +319,11 @@ export function createBoard(root, chess, options = {}) {
     },
     setLastMove(move) {
       lastMove = move ? { from: move.from, to: move.to } : null;
-      render();
+      if (move) renderMove(move);
+      else render();
     },
     reset() {
+      finishAnimations();
       selected = null;
       lastMove = null;
       closePromotion();
