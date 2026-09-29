@@ -1,3 +1,3 @@
 # kevin.bi
 
-My personal site.
+A cool website.
