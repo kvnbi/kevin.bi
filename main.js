@@ -1,7 +1,7 @@
 import { createGame } from './game.js';
 
 const SURVIVE_MOVES = 25;
-const MOVETIME = 1000;
+const MOVETIME = 300;
 
 const survivedEl = document.getElementById('survived');
 const statusEl = document.getElementById('status');
